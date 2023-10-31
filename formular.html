@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: red;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+body {
+  padding: 25px;
+  background-color: red;
+  color: black;
+  
+}
+
+.dark-mode {
+  background-color: purple;
+  color: red;
+}
+.btn {
+  border: none;
+  border-radius: 5px;
+  padding: 20px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #282A35;
+  color: white;
+  position: relative;
+}
+
+.ribbon {
+  width: 70px;
+  font-size: 12px;
+  padding: 8px;
+  position: absolute;
+  right: -55px;
+  top: -12px;
+  text-align: center;
+  border-radius: 25px;
+  transform: rotate(20deg);
+  background-color: #ff9800;
+  color: white;
+}
+
+</style>
+</head>
+<body >
+
+<h1>Anketa pro nejlepsiho sportovce</h1>
+<form method="post"action="http://jecna.lmsoft.cz/form.php" enctype="multipart/form-data">
+<p>Evidence milenek/milencu</p>
+<label for="name">Křestní jméno:<label><input type="text" name = "Krestni" required><br>
+
+<label for="fname">Příjmení:<label><input type="text" name = "Prijmeni" required><br>
+    <input type="radio" id="muze" name="gender" value="muz" checked="checked" required>
+    <label for="muz">muž</label><br>
+    <input type="radio" id="zena" name="gender" value="zena" required>
+    <label for="zena">žena</label><br>
+    
+<br>
+<label  class="switch" > <span class="ribbon">Purple mode</span>
+  <input type="checkbox" onclick="myFunction()">
+  <span class="slider round"></span>
+</label>
+
+
+<script>
+function myFunction() {
+   var element = document.body;
+   element.classList.toggle("dark-mode");
+}
+</script>
+<br><br> 
+
+
+<input type="file" id="myfile" name="myfile">
+ <br><br>
+  <input type="submit">
+  
+
+
+</body>
+</html>
+
