@@ -1,0 +1,11 @@
+
+  .sekce{
+    border: 40px blue;
+    width: 450px;
+    display: flex;
+    flex-direction: row;
+    
+  }
+  div{
+   
+  }
