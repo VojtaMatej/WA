@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Hello DOM</title>
+    <script>
+      window.onload = function () {
+
+        var firstPara = document.querySelector("p");
+
+        function ChangeColor() {
+          firstPara.style.color = "red";
+         
+        }
+        document.getElementById("myBtn").onclick = ChangeColor;
+
+
+        function RemoveBoldText() {
+          var boldText = document.querySelector("strong");
+          boldText.innerHTML = "";
+        }
+        document.getElementById("myBtn2").onclick = RemoveBoldText;
+
+
+        function AddImage() {
+          var image = document.createElement("img");
+          image.src =
+            "https://fsx3.itstep.org/api/v1/files/c2WRlRlO-c0tj6BVF6LMDkBfyoT9uScQ";
+            firstPara.parentNode.insertBefore(image, firstPara.nextSibling);
+        }
+
+        document.getElementById("myBtn3").onclick = AddImage;
+
+
+        function DeletePara() {
+          firstPara.innerHTML = "";
+        }
+
+        document.getElementById("myBtn4").onclick = DeletePara;
+      };
+    </script>
+  </head>
+  <body>
+    <pre>
+  Změna barvy textu v prvním odstavci
+  odebrání tučného textu z prvého odstavce 
+  Přidání obrázku (https://www.spsejecna.cz/ci/SPSE-Jecna_Logo.png) za první odstavec
+  Odstranění prvního odstavce
+  </pre
+    >
+
+    <input type="button" value="Změna barvy" id="myBtn" />
+    <input
+      type="button"
+      value="odebrání tučného textu z prvého odstavce "
+      id="myBtn2"
+    />
+    <input type="button" value="Přidání obrázku" id="myBtn3" />
+    <input type="button" value="Odstranění prvního odstavce" id="myBtn4" />
+
+    <p>
+      Lorem <strong>ipsum</strong> dolor sit amet consectetuer eu mauris pretium
+      et Aenean. Malesuada at Phasellus libero enim purus nulla et feugiat
+      faucibus Integer. Et laoreet In ac dui eget Curabitur accumsan leo Nunc
+      felis. Leo Duis non netus augue Suspendisse massa at scelerisque Nulla
+      eros. Eu platea a est In ultrices augue nisl libero id justo. Tempus
+      Aenean tincidunt Quisque lacinia ornare vitae quis feugiat nec ac. Aliquet
+      Phasellus iaculis. Eu Nam ipsum penatibus Lorem Integer tempor euismod
+      odio Integer risus. Tincidunt tellus tellus hac dolor turpis Aliquam
+      mauris sem convallis est. Id Phasellus justo ligula facilisi gravida
+      laoreet Sed eu congue tortor. Mus vitae Sed ligula Lorem et semper nunc
+      vel ipsum nunc. Mauris augue hendrerit elit Praesent tristique eu Nulla
+      ante dignissim sem. Eget Ut In habitant fringilla tellus vel consectetuer.
+    </p>
+
+    <p>
+      Lorem dolor sit amet consectetuer eu mauris pretium et Aenean. Malesuada
+      at Phasellus libero enim purus nulla et feugiat faucibus Integer. Et
+      laoreet In ac dui eget Curabitur accumsan leo Nunc felis. Leo Duis non
+      netus augue Suspendisse massa at scelerisque Nulla eros. Eu platea a est
+      In ultrices augue nisl libero id justo. Tempus Aenean tincidunt Quisque
+      lacinia ornare vitae quis feugiat nec ac. Aliquet Phasellus iaculis. Eu
+      Nam ipsum penatibus Lorem Integer tempor euismod odio Integer risus.
+      Tincidunt tellus tellus hac dolor turpis Aliquam mauris sem convallis est.
+      Id Phasellus justo ligula facilisi gravida laoreet Sed eu congue tortor.
+      Mus vitae Sed ligula Lorem et semper nunc vel ipsum nunc. Mauris augue
+      hendrerit elit Praesent tristique eu Nulla ante dignissim sem. Eget Ut In
+      habitant fringilla tellus vel consectetuer.
+    </p>
+  </body>
+</html>
