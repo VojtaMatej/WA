@@ -1,28 +1,24 @@
-const http = require('http');
+// db.js
+const mysql = require('mysql2');
 
-const hostname = '127.0.0.1';
-const port = 3000;
+// Database configuration (replace with your actual values)
+const config = {
+    host: 'your_host', // e.g., 'localhost'
+    user: 'your_username',
+    password: 'your_password',
+    database: 'your_database'
+};
 
-const server = http.createServer((req, res) => {
-  if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    req.on('end', () => {
-      const data = JSON.parse(body);
-      const message = data.name ? `Hello, ${data.name}` : 'Hello, World!';
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ message }));
-    });
-  } else {
-    res.statusCode = 405;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Method Not Allowed' }));
-  }
+// Create a connection
+const connection = mysql.createConnection(config);
+
+// Check connection
+connection.connect((err) => {
+    if (err) {
+        console.error('Connection failed:', err);
+        process.exit(1); // Exit the process if the connection fails
+    }
+    console.log('Connected successfully to the database.');
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+module.exports = connection; // Export the connection for use in other modules
