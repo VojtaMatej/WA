@@ -1,28 +1,66 @@
-const http = require('http');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const server = http.createServer((req, res) => {
-  if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    req.on('end', () => {
-      const data = JSON.parse(body);
-      const message = data.name ? `Hello, ${data.name}` : 'Hello, World!';
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ message }));
-    });
-  } else {
-    res.statusCode = 405;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Method Not Allowed' }));
-  }
+// Middleware for CORS
+const cors = (req, res, next) => {
+    if (req.headers.origin) {
+        res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Max-Age', '86400'); // Cache for 1 day
+    }
+
+    if (req.method === 'OPTIONS') {
+        if (req.headers['access-control-request-method']) {
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        }
+        if (req.headers['access-control-request-headers']) {
+            res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
+        }
+        return res.status(204).end();
+    }
+
+    next();
+};
+
+// Middleware for Basic Authentication
+const basicAuth = (req, res, next) => {
+    const auth = req.headers['authorization'];
+
+    if (!auth) {
+        res.setHeader('WWW-Authenticate', 'Basic realm="Coffee"');
+        return res.status(401).json({ msg: 'Unauthorized' });
+    }
+
+    const [user, pass] = Buffer.from(auth.split(' ')[1], 'base64').toString().split(':');
+
+    if (user === 'coffe' && pass === 'kafe') {
+        return next();
+    }
+
+    res.setHeader('WWW-Authenticate', 'Basic realm="Coffee"');
+    return res.status(401).json({ msg: 'Unauthorized' });
+};
+
+// Apply middlewares
+app.use(cors);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(basicAuth);
+
+// Database connection (dummy function, replace with your actual DB connection)
+const db = require('./db'); // Replace with your actual DB module
+const Requests = require('./requests'); // Replace with your actual requests module
+
+app.get('/api', (req, res) => {
+    const requests = new Requests(db);
+    // Add your request handling logic here
+    res.json({ msg: 'API is working' });
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
