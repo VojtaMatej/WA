@@ -1,28 +1,54 @@
-const http = require('http');
+const mysql = require('mysql2');
 
-const hostname = '127.0.0.1';
-const port = 3000;
+class DbDriver {
+    constructor(connection) {
+        if (!connection) {
+            throw new Error('Connection cannot be null');
+        }
+        this.cn = connection;
+    }
 
-const server = http.createServer((req, res) => {
-  if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    req.on('end', () => {
-      const data = JSON.parse(body);
-      const message = data.name ? `Hello, ${data.name}` : 'Hello, World!';
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ message }));
-    });
-  } else {
-    res.statusCode = 405;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Method Not Allowed' }));
-  }
-});
+    query(sql) {
+        return new Promise((resolve, reject) => {
+            this.cn.query(sql, (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
+                // Return the first row of the result
+                resolve(results[0]);
+            });
+        });
+    }
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+    select(tab, colm) {
+        const List = Array.isArray(colm) ? colm.join(', ') : colm;
+        const sql = `SELECT ${List} FROM ${tab}`;
+
+        return new Promise((resolve, reject) => {
+            this.cn.query(sql, (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(results);
+            });
+        });
+    }
+
+    insertRow(arr) {
+        if (!Array.isArray(arr)) return -1;
+
+        const values = arr.map(value => `'${value}'`).join(', ');
+        const sql = `INSERT INTO drinks VALUES (NULL, ${values})`; // Assuming the first column is an auto-increment ID
+
+        return new Promise((resolve, reject) => {
+            this.cn.query(sql, (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(results.affectedRows);
+            });
+        });
+    }
+
+    selectQ(sql) {
+        return new Promise((resolve, rej
