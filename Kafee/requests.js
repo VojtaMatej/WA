@@ -1,90 +1,60 @@
-const http = require('http');
-const url = require('url');
-const querystring = require('querystring');
-
-class Service {
-    constructor(conn) {
-        this.conn = conn;
-    }
-
-    getPeopleList() {
-        // Implementation here
-    }
-
-    getTypesList() {
-        // Implementation here
-    }
-
-    saveDrinks(data) {
-        // Implementation here
-    }
-
-    getSummaryOfDrinks(data) {
-        // Implementation here
-    }
-}
+const express = require('express');
+const bodyParser = require('body-parser');
 
 class RequestHandler {
-    constructor(conn) {
-        this.ser = new Service(conn);
+    constructor(service) {
+        this.service = service;
+        this.router = express.Router();
+
+        // Middleware to parse JSON and URL-encoded data
+        this.router.use(bodyParser.json());
+        this.router.use(bodyParser.urlencoded({ extended: true }));
+
+        // Route handlers
+        this.router.get('/cmd/:cmd?', (req, res) => this.controller(req.params.cmd, req.query));
+        this.router.post('/cmd/saveDrinks', (req, res) => this.controller('saveDrinks', req.body));
+        this.router.get('/cmd/listCmd', (req, res) => this.controller('listCmd', {}));
     }
 
-    handleRequest(req, res) {
-        const parsedUrl = url.parse(req.url, true);
-        const cmd = parsedUrl.query.cmd || '';
-        const method = req.method;
-        let body = '';
-
-        req.on('data', chunk => {
-            body += chunk.toString();
-        });
-
-        req.on('end', () => {
-            const POSTdata = querystring.parse(body);
-            const GETdata = parsedUrl.query;
-
-            switch (cmd) {
-                case 'getPeopleList':
-                    this.output(res, this.ser.getPeopleList());
-                    break;
-                case 'getTypesList':
-                    this.output(res, this.ser.getTypesList());
-                    break;
-                case 'saveDrinks':
-                    this.output(res, this.ser.saveDrinks(POSTdata));
-                    break;
-                case 'listCmd':
-                    this.output(res, ["getPeopleList", "getTypesList", "saveDrinks", "getSummaryOfDrinks"]);
-                    break;
-                case 'getSummaryOfDrinks':
-                    this.output(res, this.ser.getSummaryOfDrinks(GETdata));
-                    break;
-                default:
-                    this.output(res, "err");
-            }
-        });
+    controller(cmd, data) {
+        switch (cmd) {
+            case 'getPeopleList':
+                this.output(this.service.getPeopleList(), res);
+                break;
+            case 'getTypesList':
+                this.output(this.service.getTypesList(), res);
+                break;
+            case 'saveDrinks':
+                this.output(this.service.saveDrinks(data), res);
+                break;
+            case 'listCmd':
+                this.output(['getPeopleList', 'getTypesList', 'saveDrinks', 'getSummaryOfDrinks'], res);
+                break;
+            case 'getSummaryOfDrinks':
+                this.output(this.service.getSummaryOfDrinks(data), res);
+                break;
+            default:
+                this.output("err", res);
+        }
     }
 
-    output(res, str) {
-        res.setHeader('Content-Type', 'application/json');
-        if (typeof str !== 'object') {
-            res.end(JSON.stringify({ msg: str }));
+    output(data, res) {
+        if (!Array.isArray(data)) {
+            res.json({ msg: data });
         } else {
-            res.end(JSON.stringify(str));
+            res.json(data);
         }
     }
 }
 
-const hostname = '127.0.0.1';
-const port = 3000;
-const conn = {}; // Your database connection here
+// Example of usage
+const app = express();
+const service = new Service(); // Assume you have a Service class
+const requestHandler = new RequestHandler(service);
 
-const requestHandler = new RequestHandler(conn);
+app.use('/api', requestHandler.router);
 
-const server = http.createServer((req, res) => {
-    requestHandler.handleRequest(req, res);
-});
-
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
