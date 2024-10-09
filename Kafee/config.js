@@ -1,28 +1,10 @@
-const http = require('http');
+// config.js
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const config = {
+    host: 'localhost',  // Database host
+    user: 'coffe.lmsoft.cz',  // Database username
+    password: 'coffe',  // Database password
+    database: 'coffe_lmsoft_cz'  // Database name
+};
 
-const server = http.createServer((req, res) => {
-  if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    req.on('end', () => {
-      const data = JSON.parse(body);
-      const message = data.name ? `Hello, ${data.name}` : 'Hello, World!';
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ message }));
-    });
-  } else {
-    res.statusCode = 405;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Method Not Allowed' }));
-  }
-});
-
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+module.exports = config;  // Export the configuration for use in other modules
