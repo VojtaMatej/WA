@@ -1,9 +1,9 @@
-// db.js
+
 const mysql = require('mysql2');
 
-// Database configuration (replace with your actual values)
+
 const config = {
-    host: 'your_host', // e.g., 'localhost'
+    host: 'your_host', 
     user: 'your_username',
     password: 'your_password',
     database: 'your_database'
