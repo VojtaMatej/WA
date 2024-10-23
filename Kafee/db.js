@@ -3,10 +3,10 @@ const mysql = require('mysql2');
 
 
 const config = {
-    host: 'your_host', 
-    user: 'your_username',
-    password: 'your_password',
-    database: 'your_database'
+    host: 'localhost',  // Database host
+    user: 'coffe.lmsoft.cz',  // Database username
+    password: 'coffe',  // Database password
+    database: 'coffe_lmsoft_cz'  // Database name
 };
 
 // Create a connection
