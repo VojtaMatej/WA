@@ -1,54 +1,82 @@
 const mysql = require('mysql2');
 
-class DbDriver {
+// Třída dbDriver v Node.js
+class dbDriver {
     constructor(connection) {
         if (!connection) {
-            throw new Error('Connection cannot be null');
+            throw new Error("No connection provided");
         }
         this.cn = connection;
     }
 
+    // Funkce pro spuštění SQL dotazu a vrácení prvního řádku
     query(sql) {
         return new Promise((resolve, reject) => {
             this.cn.query(sql, (err, results) => {
                 if (err) {
                     return reject(err);
                 }
-                // Return the first row of the result
-                resolve(results[0]);
+                resolve(results[0]);  // Vrací první záznam
             });
         });
     }
 
+    // Funkce pro výběr z tabulky
     select(tab, colm) {
-        const List = Array.isArray(colm) ? colm.join(', ') : colm;
-        const sql = `SELECT ${List} FROM ${tab}`;
-
         return new Promise((resolve, reject) => {
+            let columns = '*';
+            if (Array.isArray(colm)) {
+                columns = colm.join(', ');
+            } else if (typeof colm === 'string') {
+                columns = colm;
+            }
+
+            const sql = `SELECT ${columns} FROM ${tab}`;
             this.cn.query(sql, (err, results) => {
                 if (err) {
                     return reject(err);
                 }
-                resolve(results);
+                resolve(results);  // Vrací všechny výsledky
             });
         });
     }
 
+    // Funkce pro vložení záznamu do tabulky "drinks"
     insertRow(arr) {
-        if (!Array.isArray(arr)) return -1;
-
-        const values = arr.map(value => `'${value}'`).join(', ');
-        const sql = `INSERT INTO drinks VALUES (NULL, ${values})`; // Assuming the first column is an auto-increment ID
-
         return new Promise((resolve, reject) => {
-            this.cn.query(sql, (err, results) => {
+            if (!Array.isArray(arr)) {
+                return reject(new Error("Input must be an array"));
+            }
+
+            const values = arr.map(val => `'${val}'`).join(', ');
+            const sql = `INSERT INTO drinks VALUES (NULL, ${values})`;  // "NULL" pro první auto increment sloupec
+
+            this.cn.query(sql, (err, result) => {
                 if (err) {
                     return reject(err);
                 }
-                resolve(results.affectedRows);
+                resolve(result);  // Vrací výsledek vkládání
             });
         });
     }
+}
 
-    selectQ(sql) {
-        return new Promise((resolve, rej
+// Příklad připojení k databázi MySQL
+const connection = mysql.createConnection({
+    host: 'localhost',  // Database host
+    user: 'coffe.lmsoft.cz',  // Database username
+    password: 'coffe',  // Database password
+    database: 'coffe_lmsoft_cz'  // Database name
+});
+
+// Příklad použití třídy dbDriver
+const db = new dbDriver(connection);
+
+// Ukázka volání funkcí
+db.select('drinks', ['name', 'price'])
+    .then(results => console.log(results))
+    .catch(err => console.error(err));
+
+db.insertRow(['Coffee', '3.50'])
+    .then(result => console.log('Inserted:', result))
+    .catch(err => console.error(err));
